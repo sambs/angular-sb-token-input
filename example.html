@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en" ng-app="app">
+<head>
+  <meta charset="utf-8">
+  <title>Token Input Demo</title>
+  <link rel="stylesheet" href="/src/token-input.css">
+  <script src="/bower_components/jquery/jquery.js"></script>
+  <script src="/bower_components/angular/angular.js"></script>
+  <script src="/bower_components/angular-mocks/angular-mocks.js"></script>
+  <script src="/bower_components/angular-ui-utils/modules/keypress/keypress.js"></script>
+  <script src="/bower_components/angular-measure-text/measure-text.js"></script>
+  <script src="/src/token-input.js"></script>
+  <script>
+    angular.module('app', ['tokenInput']).
+      controller('Controller', function ($scope) {
+        $scope.obj = { interest_tokens: ['what', 'ever'] };
+        $scope.token_input_text = '';
+        
+        $scope.$watch('token_input_text', function (text) {
+          if (text.charAt(text.length-1) === ',') {
+            $scope.obj.interest_tokens.push(text.substr(0, text.length-1));
+            $scope.token_input_text = '';
+          }
+        });
+
+        $scope.$on('tokenInputEnter', function (e) {
+          $scope.obj.interest_tokens.push($scope.token_input_text);
+          $scope.token_input_text = '';
+        });
+
+        $scope.submit = function () {
+          console.log('submit');
+        }
+      });
+  </script>
+  <style>
+    body, input {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 1em;
+    }
+
+    .token-input {
+      position: relative;
+      display: inline-block;
+      width: 200px;
+      border: 1px solid #ddd;
+      overflow: hidden;
+    }
+
+    .token-input-token, 
+    .token-input-add-btn {
+      display: inline-block;
+      float: left;
+      padding: 0 5px;
+      margin: 2px;
+      background-color: #eee;
+    }
+
+    .token-input-token-remove:before {
+      content: "×";
+    }
+  </style>
+
+</head>
+<body>
+  <div ng-controller="Controller">
+    <form novalidate name="form" ng-submit="submit()">
+      <label>Before Input:
+        <input type="text">
+      </label>
+      <label for="thetokeniser">Interest Tags:</label>
+      <input id="thetokeniser" token-input-type tokens="obj.interest_tokens" input-text="token_input_text">
+      <label>After Input:
+        <input type="text">
+      </label>
+      <input type="submit">
+    </form>
+  </div>
+</body>
+</html>
