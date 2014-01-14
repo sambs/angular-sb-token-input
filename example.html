@@ -28,6 +28,10 @@
           $scope.token_input_text = '';
         });
 
+        $scope.formatToken = function (s) {
+          return 'format-'+s;
+        };
+
         $scope.submit = function () {
           console.log('submit');
         }
@@ -73,8 +77,8 @@
       <label>Before Input:
         <input type="text">
       </label>
-      <label for="thetokeniser">Interest Tags:</label>
-      <input id="thetokeniser" token-input-type tokens="obj.interest_tokens" input-text="token_input_text">
+      <label for="tag-input">Interest Tags:</label>
+      <input id="tag-input" token-input-type format-token="formatToken" tokens="obj.interest_tokens" input-text="token_input_text">
       <label>After Input:
         <input type="text">
       </label>

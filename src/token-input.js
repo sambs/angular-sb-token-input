@@ -5,11 +5,11 @@ angular.module('tokenInput', ['measureText', 'ui.keypress'])
     return {
       restrict: 'A',
       replace: true,
-      scope: { tokens:'=tokens', inputText: '=inputText' },
+      scope: { tokens:'=tokens', inputText: '=inputText', formatToken: '=formatToken' },
       template: [
         '<div class="token-input dummy-input">',
           '<span class="token-input-token btn" ng-repeat="token in tokens" tabindex="0" ui-keydown="{\'delete backspace\': \'removeTokenAtIndex($index, $event)\'}">',
-            '<span class="token-input-token-name" ng-bind="token"></span>',
+            '<span class="token-input-token-name" ng-bind="formatToken(token)"></span>',
             '<a class="token-input-token-remove" ng-click="removeTokenAtIndex($index)"></a>',
           '</span>',
           '<input class="token-input-input" type="text" ng-model="inputText" ng-style="inputStyle" ui-keydown="{\'backspace\': \'onInputDelete()\', \'return enter\': \'onInputEnter()\' }" ng-focus="onFocus()">',
@@ -23,6 +23,12 @@ angular.module('tokenInput', ['measureText', 'ui.keypress'])
         if (!$scope.inputText) $scope.inputText = '';
 
         $scope.inputStyle = { width: '10px' };
+
+        if (!$scope.formatToken) {
+          $scope.formatToken = function (token) {
+            return token;
+          };
+        }
 
         $scope.removeTokenAtIndex = function (index, $event) {
           $scope.tokens.splice(index, 1);
