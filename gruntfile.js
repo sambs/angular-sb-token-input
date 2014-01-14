@@ -16,16 +16,6 @@ module.exports = function(grunt) {
     jsonlint: {
       files: ['bower.json', 'package.json']
     },
-    html2js: {
-      options: {
-        'base': 'src',
-        'module': 'tokenInput.templates'
-      },
-      main: {
-        src: ['src/*.html'],
-        dest: 'build/token-input-templates.js'
-      }
-    },
     //karma: {
       //develop: {
         //configFile: 'karma.conf.js',
@@ -45,10 +35,6 @@ module.exports = function(grunt) {
       jsonlint: {
         files: ['<%= jsonlint.files %>'],
         tasks: ['jsonlint']
-      },
-      html2js: {
-        files: ['<%= html2js.main.src %>'],
-        tasks: ['html2js']
       },
       karma: {
         files: ['src/*.js', 'test/*'],
@@ -76,7 +62,6 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-jsonlint');
-  grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
@@ -84,7 +69,6 @@ module.exports = function(grunt) {
   grunt.registerTask('develop', [
     'jshint',
     'jsonlint',
-    'html2js',
     'connect:test',
     //'karma:develop',
     'watch'
@@ -93,8 +77,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test', [
     'jshint',
-    'jsonlint',
-    'html2js'
+    'jsonlint'
     //'connect:test',
     //'karma:all'
   ]);
