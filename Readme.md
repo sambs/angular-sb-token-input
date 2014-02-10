@@ -1,4 +1,4 @@
-An angular tag input directive for ivo.
+An angular token input directive for ivo.
 
 To Do:
 - set view value?
