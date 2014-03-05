@@ -3,17 +3,17 @@
 <head>
   <meta charset="utf-8">
   <title>Token Input Demo</title>
-  <link rel="stylesheet" href="/src/token-input.css">
-  <script src="/bower_components/jquery/jquery.js"></script>
-  <script src="/bower_components/angular/angular.js"></script>
-  <script src="/bower_components/angular-mocks/angular-mocks.js"></script>
-  <script src="/bower_components/angular-ui-utils/modules/keypress/keypress.js"></script>
-  <script src="/bower_components/angular-measure-text/measure-text.js"></script>
-  <script src="/src/token-input.js"></script>
+  <link rel="stylesheet" href="src/token-input.css">
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+  <script src="bower_components/jquery/jquery.js"></script>
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-ui-utils/modules/keypress/keypress.js"></script>
+  <script src="bower_components/angular-sb-measure-text/measure-text.js"></script>
+  <script src="src/token-input.js"></script>
   <script>
     angular.module('app', ['tokenInput']).
       controller('Controller', function ($scope) {
-        $scope.obj = { interest_tokens: ['what', 'ever'] };
+        $scope.obj = { interest_tokens: ['bird', 'bum'] };
         $scope.token_input_text = '';
         
         $scope.$watch('token_input_text', function (text) {
@@ -29,7 +29,7 @@
         });
 
         $scope.formatToken = function (s) {
-          return 'format-'+s;
+          return 'big '+s;
         };
 
         $scope.submit = function () {
@@ -38,52 +38,69 @@
       });
   </script>
   <style>
-    body, input {
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 1em;
-    }
 
     .token-input {
       position: relative;
-      display: inline-block;
-      width: 200px;
-      border: 1px solid #ddd;
+      height: auto;
+      min-height: 34px;
+      padding: 0 6px; 
       overflow: hidden;
     }
 
     .token-input-token, 
-    .token-input-add-btn {
+    .token-input-input {
       display: inline-block;
       float: left;
+      line-height: 18px;
       padding: 0 5px;
-      margin: 2px;
+      margin: 6px;
+      font-size: 14px;
+    }
+
+    .token-input-token {
+      line-height: 18px;
+      padding: 2px 5px;
+      margin: 4px;
       background-color: #eee;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .token-input-input {
+      line-height: 24px;
+      padding: 0 5px;
+      margin: 4px;
     }
 
     .token-input-token-remove:before {
       content: "×";
+      margin: 0 0 0 3px;
+      font-weight: bold;
     }
   </style>
 
 </head>
 <body>
-  <div ng-controller="Controller">
-    <form novalidate name="form" ng-submit="submit()">
-      <label>Before Input:
-        <input type="text">
-      </label>
-      <label for="tag-input">Interest Tags:</label>
-      <input id="tag-input" token-input-type format-token="formatToken" tokens="obj.interest_tokens" input-text="token_input_text">
-      <label>After Input:
-        <input type="text">
-      </label>
-      <input type="submit">
-    </form>
+  <div class="container" ng-controller="Controller">
+    <h1>Token Input Demo</h1>
+    <div class="row">
+      <form class="col-md-6" novalidate name="form" ng-submit="submit()">
+        <div class="form-group">
+          <label>Before Input:</label>
+          <input class="form-control" type="text">
+        </div>
+        <div class="form-group">
+          <label for="tag-input">Interest Tags:</label>
+          <input class="form-control" id="tag-input" token-input-type format-token="formatToken" tokens="obj.interest_tokens" input-text="token_input_text">
+          </div>
+        <div class="form-group">
+          <label>After Input: </label>
+          <input class="form-control" type="text">
+        </div>
+        <input class="btn btn-default" type="submit">
+      </form>
+    </div>
   </div>
 </body>
 </html>
