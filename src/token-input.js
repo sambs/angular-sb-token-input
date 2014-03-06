@@ -4,13 +4,13 @@ angular.module('sbTokenInput', ['sbMeasureText'])
   .directive('sbTokenInput', ['$timeout', 'sbMeasureTextWidth', function ($timeout, measureTextWidth) {
 
     return {
-      restrict: 'A',
+      restrict: 'EA',
       replace: true,
-      scope: { 
-        tokens:'=sbTokens', 
-        input: '=sbInput', 
-        formatDisplay: '=sbFormatDisplay',  
-        displayProperty: '=sbDisplayProperty',  
+      scope: {
+        tokens:'=sbTokens',
+        input: '=sbInput',
+        formatDisplay: '=sbFormatDisplay',
+        displayProperty: '=sbDisplayProperty',
       },
       template: [
         '<div class="token-input" ng-click="onClick($event)">',
@@ -43,11 +43,9 @@ angular.module('sbTokenInput', ['sbMeasureText'])
 
         scope.removeToken = function (token) {
           var index = scope.tokens.indexOf(token);
-
           scope.tokens.splice(index, 1);
-
+          // Set the focus to the next token back
           $timeout(function () {
-            // Set the focus to the next token back
             if (scope.tokens.length) {
               var nextTokenIndex = Math.min(index, scope.tokens.length-1);
               elem.find('.token-input-token').eq(nextTokenIndex).focus();
@@ -57,14 +55,14 @@ angular.module('sbTokenInput', ['sbMeasureText'])
           });
         };
 
-        // Focus on input 
+        // Focus on input
         elem.on('click', function (e) {
           if (event.target === elem[0]) input.focus();
         });
 
         // Delete token If delete or backspace pressed while focussed
         scope.onTokenKeydown = function (event, index) {
-          if (~[46,8].indexOf(event.which)) { 
+          if (~[46,8].indexOf(event.which)) {
             event.preventDefault();
             scope.removeTokenAt(index);
           }
@@ -116,4 +114,3 @@ angular.module('sbTokenInput', ['sbMeasureText'])
       }
     };
   }]);
-
