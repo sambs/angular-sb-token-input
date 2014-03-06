@@ -1,5 +1,5 @@
 
-angular.module('tokenInput', ['sbMeasureText', 'ui.keypress'])
+angular.module('tokenInput', ['sbMeasureText'])
 
   .directive('tokenInputType', ['$timeout', 'sbMeasureTextWidth', function ($timeout, measureTextWidth) {
 
@@ -9,11 +9,11 @@ angular.module('tokenInput', ['sbMeasureText', 'ui.keypress'])
       scope: { tokens:'=tokens', inputText: '=inputText', formatToken: '=formatToken' },
       template: [
         '<div class="token-input">',
-          '<span class="token-input-token" ng-repeat="token in tokens" tabindex="0" ui-keydown="{\'delete backspace\': \'removeTokenAtIndex($index, $event)\'}">',
+          '<span class="token-input-token" ng-repeat="token in tokens" tabindex="0" ng-keydown="onTokenKeydown($event, $index)">',
             '<span class="token-input-token-name" ng-bind="formatToken(token)"></span>',
-            '<a class="token-input-token-remove" ng-click="removeTokenAtIndex($index)"></a>',
+            '<a class="token-input-token-remove" ng-click="removeTokenAt($index)"></a>',
           '</span>',
-          '<input class="token-input-input" type="text" ng-model="inputText" ng-style="inputStyle" ui-keydown="{\'backspace\': \'onInputDelete()\', \'return enter\': \'onInputEnter()\' }" ng-focus="onFocus()">',
+          '<input class="token-input-input" type="text" ng-model="inputText" ng-style="inputStyle" ng-keydown="onInputKeydown($event)" ng-focus="onFocus()">',
         '</div>'
       ].join(''),
 
@@ -31,10 +31,8 @@ angular.module('tokenInput', ['sbMeasureText', 'ui.keypress'])
           };
         }
 
-        scope.removeTokenAtIndex = function (index, $event) {
+        scope.removeTokenAt = function (index) {
           scope.tokens.splice(index, 1);
-
-          if ($event) $event.preventDefault();
 
           $timeout(function () {
             // Set the focus to the next token back
@@ -58,18 +56,25 @@ angular.module('tokenInput', ['sbMeasureText', 'ui.keypress'])
           resizeInput();
         });
 
-        scope.onInputDelete = function () {
-          if (!scope.inputText.length && scope.tokens.length) {
-            elem.find('.token-input-token').eq(scope.tokens.length-1).focus();
+        scope.onFocus = function () {
+          scope.$emit('tokenInputFocus');
+        };
+
+        scope.onTokenKeydown = function (event, index) {
+          // If delete or backspace
+          if (~[46,8].indexOf(event.which)) { 
+            event.preventDefault();
+            scope.removeTokenAt(index);
           }
         };
 
-        scope.onInputEnter = function () {
-          scope.$emit('tokenInputEnter');
-        };
-
-        scope.onFocus = function () {
-          scope.$emit('tokenInputFocus');
+        scope.onInputKeydown = function (event) {
+          // If delete or backspace select last token
+          if (~[46,8].indexOf(event.which)) {
+            if (!scope.inputText.length && scope.tokens.length) {
+              elem.find('.token-input-token').eq(scope.tokens.length-1).focus();
+            }
+          }
         };
 
         function resizeInput () {

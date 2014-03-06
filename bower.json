@@ -4,7 +4,6 @@
   "dependencies": {
     "jquery": "~1.9.1",
     "angular": "~1.2.0",
-    "angular-ui-utils": "~0.0.2",
     "angular-sb-measure-text": "~0.3.0"
   },
   "devDependencies": {

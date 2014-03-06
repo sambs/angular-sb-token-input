@@ -23,11 +23,6 @@
           }
         });
 
-        $scope.$on('tokenInputEnter', function (e) {
-          $scope.obj.interest_tokens.push($scope.token_input_text);
-          $scope.token_input_text = '';
-        });
-
         $scope.formatToken = function (s) {
           return 'big '+s;
         };
