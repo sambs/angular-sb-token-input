@@ -5,33 +5,6 @@
   <title>Token Input Demo</title>
   <link rel="stylesheet" href="src/token-input.css">
   <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
-  <script src="bower_components/jquery/jquery.js"></script>
-  <script src="bower_components/angular/angular.js"></script>
-  <script src="bower_components/angular-ui-utils/modules/keypress/keypress.js"></script>
-  <script src="bower_components/angular-sb-measure-text/measure-text.js"></script>
-  <script src="src/token-input.js"></script>
-  <script>
-    angular.module('app', ['tokenInput']).
-      controller('Controller', function ($scope) {
-        $scope.obj = { interest_tokens: ['bird', 'bum'] };
-        $scope.token_input_text = '';
-        
-        $scope.$watch('token_input_text', function (text) {
-          if (text.charAt(text.length-1) === ',') {
-            $scope.obj.interest_tokens.push(text.substr(0, text.length-1));
-            $scope.token_input_text = '';
-          }
-        });
-
-        $scope.formatToken = function (s) {
-          return 'big '+s;
-        };
-
-        $scope.submit = function () {
-          console.log('submit');
-        }
-      });
-  </script>
   <style>
 
     .token-input {
@@ -40,6 +13,7 @@
       min-height: 34px;
       padding: 0 6px; 
       overflow: hidden;
+      cursor: text;
     }
 
     .token-input-token, 
@@ -87,7 +61,7 @@
         </div>
         <div class="form-group">
           <label for="tag-input">Interest Tags:</label>
-          <input class="form-control" id="tag-input" token-input-type format-token="formatToken" tokens="obj.interest_tokens" input-text="token_input_text">
+          <input class="form-control" id="tag-input" token-input format-display="formatToken" tokens="obj.interest_tokens" input="new_token">
           </div>
         <div class="form-group">
           <label>After Input: </label>
@@ -97,5 +71,32 @@
       </form>
     </div>
   </div>
+  <script src="bower_components/jquery/jquery.js"></script>
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-ui-utils/modules/keypress/keypress.js"></script>
+  <script src="bower_components/angular-sb-measure-text/measure-text.js"></script>
+  <script src="src/token-input.js"></script>
+  <script>
+    angular.module('app', ['tokenInput']).
+      controller('Controller', function ($scope) {
+        $scope.obj = { interest_tokens: ['bird', 'bum'] };
+        
+        $scope.$watch('new_token', function (text) {
+          if (!text) return;
+          if (text.charAt(text.length-1) === ',') {
+            $scope.obj.interest_tokens.push(text.substr(0, text.length-1));
+            $scope.new_token = '';
+          }
+        });
+
+        $scope.formatToken = function (token) {
+          return 'big '+token;
+        };
+
+        $scope.submit = function () {
+          console.log('submit');
+        }
+      });
+  </script>
 </body>
 </html>

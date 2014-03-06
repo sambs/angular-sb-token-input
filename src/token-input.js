@@ -1,19 +1,24 @@
 
 angular.module('tokenInput', ['sbMeasureText'])
 
-  .directive('tokenInputType', ['$timeout', 'sbMeasureTextWidth', function ($timeout, measureTextWidth) {
+  .directive('tokenInput', ['$timeout', 'sbMeasureTextWidth', function ($timeout, measureTextWidth) {
 
     return {
       restrict: 'A',
       replace: true,
-      scope: { tokens:'=tokens', inputText: '=inputText', formatToken: '=formatToken' },
+      scope: { 
+        tokens:'=tokens', 
+        input: '=input', 
+        formatDisplay: '=formatDisplay',  
+        displayProperty: '=displayProperty',  
+      },
       template: [
-        '<div class="token-input">',
+        '<div class="token-input" ng-click="onClick($event)">',
           '<span class="token-input-token" ng-repeat="token in tokens" tabindex="0" ng-keydown="onTokenKeydown($event, $index)">',
-            '<span class="token-input-token-name" ng-bind="formatToken(token)"></span>',
+            '<span class="token-input-token-name" ng-bind="formatDisplay(token)"></span>',
             '<a class="token-input-token-remove" ng-click="removeTokenAt($index)"></a>',
           '</span>',
-          '<input class="token-input-input" type="text" ng-model="inputText" ng-style="inputStyle" ng-keydown="onInputKeydown($event)" ng-focus="onFocus()">',
+          '<input class="token-input-input" type="text" ng-model="input" ng-style="inputStyle" ng-keydown="onInputKeydown($event)">',
         '</div>'
       ].join(''),
 
@@ -21,14 +26,19 @@ angular.module('tokenInput', ['sbMeasureText'])
         var input = elem.find('.token-input-input');
 
         if (!scope.tokens) scope.tokens = [];
-        if (!scope.inputText) scope.inputText = '';
 
         scope.inputStyle = { width: '10px' };
 
-        if (!scope.formatToken) {
-          scope.formatToken = function (token) {
-            return token;
-          };
+        if (!scope.formatDisplay) {
+          if (scope.displayProperty) {
+            scope.formatDisplay = function (item) {
+              return item[scope.displayProperty];
+            };
+          } else {
+            scope.formatDisplay = function (item) {
+              return item;
+            };
+          }
         }
 
         scope.removeTokenAt = function (index) {
@@ -45,23 +55,13 @@ angular.module('tokenInput', ['sbMeasureText'])
           });
         };
 
+        // Focus on input 
         elem.on('click', function (e) {
-          // Focus on input unless a specific tag was clicked;
-          if ($(e.target).is('[class^=token-input-token]')) return;
-          e.preventDefault();
-          input.focus();
+          if (event.target === elem[0]) input.focus();
         });
 
-        scope.$watch('inputText', function () {
-          resizeInput();
-        });
-
-        scope.onFocus = function () {
-          scope.$emit('tokenInputFocus');
-        };
-
+        // Delete token If delete or backspace pressed while focussed
         scope.onTokenKeydown = function (event, index) {
-          // If delete or backspace
           if (~[46,8].indexOf(event.which)) { 
             event.preventDefault();
             scope.removeTokenAt(index);
@@ -69,16 +69,16 @@ angular.module('tokenInput', ['sbMeasureText'])
         };
 
         scope.onInputKeydown = function (event) {
-          // If delete or backspace select last token
+          // If empty and delete or backspace pressed, select last token
           if (~[46,8].indexOf(event.which)) {
-            if (!scope.inputText.length && scope.tokens.length) {
+            if (!scope.input.length && scope.tokens.length) {
               elem.find('.token-input-token').eq(scope.tokens.length-1).focus();
             }
           }
         };
 
-        function resizeInput () {
-          if (!scope.inputText) {
+        scope.resizeInput = function () {
+          if (!scope.input) {
             scope.inputStyle = { width: '10px' };
           } else {
             var minimumWidth, left, maxWidth, containerLeft, searchWidth,
@@ -108,7 +108,9 @@ angular.module('tokenInput', ['sbMeasureText'])
 
             scope.inputStyle = { width: searchWidth + 'px' };
           }
-        }
+        };
+
+        scope.$watch('input', scope.resizeInput);
       }
     };
   }]);
