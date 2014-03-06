@@ -11,12 +11,12 @@
       position: relative;
       height: auto;
       min-height: 34px;
-      padding: 0 6px; 
+      padding: 0 6px;
       overflow: hidden;
       cursor: text;
     }
 
-    .token-input-token, 
+    .token-input-token,
     .token-input-input {
       display: inline-block;
       float: left;
@@ -61,8 +61,12 @@
         </div>
         <div class="form-group">
           <label for="tag-input">Interest Tags:</label>
-          <input class="form-control" id="tag-input" sb-token-input sb-format-display="formatToken" sb-tokens="obj.interests" sb-input="new_token">
-          </div>
+          <div class="form-control" id="tag-input" name="interests" sb-free-token-input ng-model="obj.interests" sb-maxlength="3" sb-minlength="1"></div>
+          <pre>
+Value: {{obj.interests|json}}
+Errors: {{form.interests.$error|json}}
+          </pre>
+        </div>
         <div class="form-group">
           <label>After Input: </label>
           <input class="form-control" type="text">
@@ -79,21 +83,7 @@
   <script>
     angular.module('app', ['sbTokenInput']).
       controller('Controller', function ($scope) {
-        $scope.obj = { interests: ['bird', 'bum'] };
-        
-        $scope.$watch('new_token', function (text) {
-          if (!text) return;
-          if (text.charAt(text.length-1) === ',') {
-            var token = text.substr(0, text.length-1);
-            if (~$scope.obj.interests.indexOf(token)) return;
-            $scope.obj.interests.push(token);
-            $scope.new_token = '';
-          }
-        });
-
-        $scope.formatToken = function (token) {
-          return 'big '+token;
-        };
+        $scope.obj = { interests: ['bird', 'bum'], };
 
         $scope.submit = function () {
           console.log('submit');
