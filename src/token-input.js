@@ -1,22 +1,22 @@
 
-angular.module('tokenInput', ['sbMeasureText'])
+angular.module('sbTokenInput', ['sbMeasureText'])
 
-  .directive('tokenInput', ['$timeout', 'sbMeasureTextWidth', function ($timeout, measureTextWidth) {
+  .directive('sbTokenInput', ['$timeout', 'sbMeasureTextWidth', function ($timeout, measureTextWidth) {
 
     return {
       restrict: 'A',
       replace: true,
       scope: { 
-        tokens:'=tokens', 
-        input: '=input', 
-        formatDisplay: '=formatDisplay',  
-        displayProperty: '=displayProperty',  
+        tokens:'=sbTokens', 
+        input: '=sbInput', 
+        formatDisplay: '=sbFormatDisplay',  
+        displayProperty: '=sbDisplayProperty',  
       },
       template: [
         '<div class="token-input" ng-click="onClick($event)">',
           '<span class="token-input-token" ng-repeat="token in tokens" tabindex="0" ng-keydown="onTokenKeydown($event, $index)">',
             '<span class="token-input-token-name" ng-bind="formatDisplay(token)"></span>',
-            '<a class="token-input-token-remove" ng-click="removeTokenAt($index)"></a>',
+            '<a class="token-input-token-remove" ng-click="removeToken(token)"></a>',
           '</span>',
           '<input class="token-input-input" type="text" ng-model="input" ng-style="inputStyle" ng-keydown="onInputKeydown($event)">',
         '</div>'
@@ -41,7 +41,9 @@ angular.module('tokenInput', ['sbMeasureText'])
           }
         }
 
-        scope.removeTokenAt = function (index) {
+        scope.removeToken = function (token) {
+          var index = scope.tokens.indexOf(token);
+
           scope.tokens.splice(index, 1);
 
           $timeout(function () {
