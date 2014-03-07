@@ -1,5 +1,5 @@
 {
-  "name": "angular-token-input",
+  "name": "angular-sb-token-input",
   "version": "0.0.1",
   "dependencies": {
     "jquery": "~1.9.1",
@@ -13,5 +13,10 @@
   "main": [
     "src/token-input.css",
     "src/token-input.js"
+  ],
+  "keywords": [
+    "angular",
+    "token",
+    "input"
   ]
 }

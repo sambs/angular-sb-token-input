@@ -10,12 +10,16 @@ angular.module('sbTokenInput', ['sbMeasureText'])
       scope: {
         tokens:'=sbTokens',
         input: '=sbInput',
+        placeholder: '@placeholder',
         formatDisplay: '&sbFormatDisplay',
-        displayProperty: '&sbDisplayProperty'
+        displayProperty: '@sbDisplayProperty',
+        track: '&sbTrack',
+        trackingProperty: '@sbTrackingProperty'
       },
       template: [
-        '<div class="token-input" ng-click="onClick($event)">',
-          '<span class="token-input-token" ng-repeat="token in tokens" tabindex="0" ng-keydown="onTokenKeydown($event, $index)">',
+        '<div class="token-input dummy-input form-control" ng-click="onClick($event)">',
+          '<div class="token-input-placeholder placeholder" ng-bind="placeholder" ng-show="placeholder && !input && !tokens.length"></div>',
+          '<span class="token-input-token" ng-repeat="token in tokens track by track(token)" tabindex="0" ng-keydown="onTokenKeydown($event, $index)">',
             '<span class="token-input-token-name" ng-bind="formatDisplay(token)"></span>',
             '<a class="token-input-token-remove" ng-click="removeTokenAt(index)"></a>',
           '</span>',
@@ -26,10 +30,11 @@ angular.module('sbTokenInput', ['sbMeasureText'])
       link: function(scope, elem, attrs, model) {
         var input = elem.find('.token-input-input');
 
-        scope.formatDisplay = scope.formatDisplay();
-        scope.displayProperty = scope.displayProperty();
         scope.tokens = scope.tokens || [];
+        scope.input = scope.input || '';
         scope.inputStyle = { width: '10px' };
+        scope.formatDisplay = scope.formatDisplay();
+        scope.track = scope.track();
 
         if (!scope.formatDisplay) {
           if (scope.displayProperty) {
@@ -42,6 +47,33 @@ angular.module('sbTokenInput', ['sbMeasureText'])
             };
           }
         }
+
+        if (!scope.track) {
+          if (scope.trackingProperty) {
+            scope.track = function (item) {
+              return item[scope.trackingProperty];
+            };
+          } else {
+            scope.track = function (item) {
+              return item;
+            };
+          }
+        }
+
+        scope.tracked = [];
+
+        scope.$watch('tokens', function (val, prev) {
+          scope.tracked = scope.tokens.map(scope.track);
+        }, true);
+
+        scope.hasToken = function (token) {
+          return !!~scope.tracked.indexOf(scope.track(token));
+        };
+
+        scope.addToken = function (token) {
+          if (scope.hasToken(token)) return;
+          scope.tokens.push(token);
+        };
 
         scope.removeTokenAt = function (index) {
           // Remove token
@@ -58,8 +90,10 @@ angular.module('sbTokenInput', ['sbMeasureText'])
         };
 
         // Focus on input
-        elem.on('click', function (e) {
-          if (event.target === elem[0]) input.focus();
+        elem.on('click', function (event) {
+          // We dont want to trigger a digest here
+          var $elem = angular.element(event.target);
+          if ($elem.hasClass('token-input') || $elem.hasClass('placeholder')) input.focus();
         });
 
         // Delete token If delete or backspace pressed while focussed
@@ -70,8 +104,8 @@ angular.module('sbTokenInput', ['sbMeasureText'])
           }
         };
 
+        // If empty and delete or backspace pressed, select last token
         scope.onInputKeydown = function (event) {
-          // If empty and delete or backspace pressed, select last token
           if (~[46,8].indexOf(event.which)) {
             if (!scope.input.length && scope.tokens.length) {
               elem.find('.token-input-token').eq(scope.tokens.length-1).focus();
@@ -127,8 +161,11 @@ angular.module('sbTokenInput', ['sbMeasureText'])
     def.require = 'ngModel';
 
     def.scope = {
+      placeholder: '@placeholder',
       formatDisplay: '&sbFormatDisplay',
-      displayProperty: '&sbDisplayProperty'
+      displayProperty: '@sbDisplayProperty',
+      track: '&sbTrack',
+      trackingProperty: '@sbTrackingProperty'
     };
 
     // Override link function
@@ -141,21 +178,31 @@ angular.module('sbTokenInput', ['sbMeasureText'])
         if (!text) return;
         if (text.charAt(text.length-1) === ',') {
           var token = text.substr(0, text.length-1);
-          if (~scope.tokens.indexOf(token)) return;
-          scope.tokens.push(token);
+          scope.addToken(token);
           scope.input = '';
         }
       });
 
+      // Add token on return key press
+      elem.find('input').on('keydown', function (event) {
+        if (event.which == 13 && scope.input) {
+          event.preventDefault();
+          scope.$apply(function () {
+            scope.addToken(scope.input);
+            scope.input = '';
+          });
+        }
+      });
+
+      // Set view value
       scope.$watch('tokens', function (val, prev) {
-        console.log('watch', val, prev);
+        if (val === prev) return;
         ctrl.$setViewValue(val);
       }, true);
 
+      // Update from model
       ctrl.$render = function () {
-        if (ctrl.$viewValue) {
-          scope.tokens = ctrl.$viewValue;
-        }
+        scope.tokens = ctrl.$viewValue || [];
       };
     };
 

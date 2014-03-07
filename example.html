@@ -6,7 +6,6 @@
   <link rel="stylesheet" href="src/token-input.css">
   <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
   <style>
-
     .token-input {
       position: relative;
       height: auto;
@@ -36,19 +35,24 @@
       box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
 
-    .token-input-input {
-      line-height: 24px;
-      padding: 0 5px;
-      margin: 4px;
-    }
-
     .token-input-token-remove:before {
       content: "×";
       margin: 0 0 0 3px;
       font-weight: bold;
     }
-  </style>
 
+    .token-input-input,
+    .token-input-placeholder {
+      line-height: 24px;
+      padding: 0 5px;
+      margin: 4px;
+    }
+
+    .token-input-placeholder {
+      position: absolute;
+      color: #999;
+    }
+  </style>
 </head>
 <body>
   <div class="container" ng-controller="Controller">
@@ -57,16 +61,16 @@
       <form class="col-md-6" novalidate name="form" ng-submit="submit()">
         <div class="form-group">
           <label>Before Input:</label>
-          <input class="form-control" type="text">
+          <input class="form-control" type="text" placeholder="Generic text">
         </div>
         <div class="form-group">
           <label for="tag-input">Interest Tags:</label>
-          <div class="form-control" id="tag-input" name="interests" sb-free-token-input ng-model="obj.interests" sb-maxlength="3" sb-minlength="1"></div>
-          <pre>
+          <div class="form-control" id="tag-input" name="interests" sb-free-token-input ng-model="obj.interests" placeholder="Search for you interestes"></div>
+        </div>
+        <pre>
 Value: {{obj.interests|json}}
 Errors: {{form.interests.$error|json}}
-          </pre>
-        </div>
+        </pre>
         <div class="form-group">
           <label>After Input: </label>
           <input class="form-control" type="text">
@@ -77,13 +81,12 @@ Errors: {{form.interests.$error|json}}
   </div>
   <script src="bower_components/jquery/jquery.js"></script>
   <script src="bower_components/angular/angular.js"></script>
-  <script src="bower_components/angular-ui-utils/modules/keypress/keypress.js"></script>
   <script src="bower_components/angular-sb-measure-text/measure-text.js"></script>
   <script src="src/token-input.js"></script>
   <script>
     angular.module('app', ['sbTokenInput']).
       controller('Controller', function ($scope) {
-        $scope.obj = { interests: ['bird', 'bum'], };
+        $scope.obj = { interests: ['bird', 'fish'] };
 
         $scope.submit = function () {
           console.log('submit');
