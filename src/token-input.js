@@ -17,13 +17,13 @@ angular.module('sbTokenInput', ['sbMeasureText'])
         trackingProperty: '@sbTrackingProperty'
       },
       template: [
-        '<div class="token-input dummy-input form-control" ng-click="onClick($event)">',
+        '<div class="token-input form-control" ng-class="{focus:focus}" ng-click="onClick($event)">',
           '<div class="token-input-placeholder placeholder" ng-bind="placeholder" ng-show="placeholder && !input && !tokens.length"></div>',
           '<span class="token-input-token" ng-repeat="token in tokens track by track(token)" tabindex="0" ng-keydown="onTokenKeydown($event, $index)">',
             '<span class="token-input-token-name" ng-bind="formatDisplay(token)"></span>',
             '<a class="token-input-token-remove" ng-click="removeTokenAt(index)"></a>',
           '</span>',
-          '<input class="token-input-input" type="text" ng-model="input" ng-style="inputStyle" ng-keydown="onInputKeydown($event)">',
+          '<input class="token-input-input" type="text" ng-model="input" ng-style="inputStyle" ng-keydown="onInputKeydown($event)" ng-focus="focus=true" ng-blur="focus=false">',
         '</div>'
       ].join(''),
 
