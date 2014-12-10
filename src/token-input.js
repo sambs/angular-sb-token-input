@@ -14,7 +14,8 @@ angular.module('sbTokenInput', ['sbMeasureText'])
         formatDisplay: '&sbFormatDisplay',
         displayProperty: '@sbDisplayProperty',
         track: '&sbTrack',
-        trackingProperty: '@sbTrackingProperty'
+        trackingProperty: '@sbTrackingProperty',
+        max: '@sbMaxlength'
       },
       template: [
         '<div class="token-input form-control" ng-class="{focus:focus}" ng-click="onClick($event)">',
@@ -23,7 +24,7 @@ angular.module('sbTokenInput', ['sbMeasureText'])
             '<span class="token-input-token-name" ng-bind="formatDisplay(token)"></span>',
             '<a class="token-input-token-remove" ng-click="removeTokenAt(index)"></a>',
           '</span>',
-          '<input class="token-input-input" type="text" ng-model="input" ng-style="inputStyle" ng-keydown="onInputKeydown($event)" ng-focus="focus=true" ng-blur="focus=false">',
+          '<input class="token-input-input" type="text" ng-model="input" ng-style="inputStyle" ng-keydown="onInputKeydown($event)" ng-focus="focus=true" ng-blur="focus=false" ng-disabled="tokens.length>=max">',
         '</div>'
       ].join(''),
 
@@ -165,7 +166,8 @@ angular.module('sbTokenInput', ['sbMeasureText'])
       formatDisplay: '&sbFormatDisplay',
       displayProperty: '@sbDisplayProperty',
       track: '&sbTrack',
-      trackingProperty: '@sbTrackingProperty'
+      trackingProperty: '@sbTrackingProperty',
+      max: '@sbMaxlength'
     };
 
     // Override link function
